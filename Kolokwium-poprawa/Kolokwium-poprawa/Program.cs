@@ -1,8 +1,18 @@
+using Kolokwium_poprawa.Data;
+using Kolokwium_poprawa.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddDbContext<DatabaseContext>(options => 
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
+);
+
+builder.Services.AddScoped<IDbService, DbService>();
 
 var app = builder.Build();
 
