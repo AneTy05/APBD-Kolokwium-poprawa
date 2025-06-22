@@ -1,13 +1,16 @@
-﻿namespace Kolokwium_poprawa.Services;
+﻿
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-public interface IDbService
+namespace APBD_Kolokwium.Services
 {
-    /*
-    Task<ICollection<Order>> GetOrdersData(string? clientLastName);
-    Task<bool> DoesClientExist(int clientID);
-    Task<bool> DoesEmployeeExist(int employeeID);
-    Task AddNewOrder(Order order);
-    Task<Pastry?> GetPastryByName(string name);
-    Task AddOrderPastries(IEnumerable<OrderPastry> orderPastries);
-     */
+    public interface IDbService
+    {
+        Task<bool> GalleryExistsAsync(string name);
+        Task<bool> ArtworkExistsAsync(int artworkId);
+        Task<T?> GetByIdAsync<T>(int id) where T : class;
+        Task<IEnumerable<T>> GetAllAsync<T>() where T : class;
+        Task AddAsync<T>(T entity) where T : class;
+        Task SaveAsync();
+    }
 }

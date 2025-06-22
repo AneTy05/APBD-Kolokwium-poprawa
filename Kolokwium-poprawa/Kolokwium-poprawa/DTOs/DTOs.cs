@@ -1,45 +1,45 @@
 ﻿namespace Kolokwium_poprawa.DTOs;
 
-public class DTOs
+public class GalleryExhibitionsDto
 {
-    /*
-    public class NewOrderDTO
-{
-    [Required]
-    public int EmployeeID { get; set; }
-    [Required]
-    public DateTime AcceptedAt { get; set; }
-    [MaxLength(300)]
-    public string? Comments { get; set; } = null;
-    [Required]
-    public ICollection<NewOrderPastryDTO> Pastries { get; set; } = new List<NewOrderPastryDTO>();
+    public int GalleryId { get; set; }
+    public string Name { get; set; }
+    public DateTime EstablishedDate { get; set; }
+    public List<ExhibitionDto> Exhibitions { get; set; }
 }
 
-public class NewOrderPastryDTO
-{
-    [Required]
-    public string Name { get; set; } = null!;
-    [Required]
-    [Range(1, int.MaxValue)]
-    public int Amount { get; set; }
-    [MaxLength(300)]
-    public string? Comments { get; set; }
-}
 
-public class GetOrdersDTO
+public class ExhibitionDto
 {
-    public int Id { get; set; }
-    public DateTime AcceptedAt { get; set; }
-    public DateTime? FulfilledAt { get; set; }
-    public string? Comments { get; set; }
-    public ICollection<GetOrdersPastryDTO> Pastries { get; set; } = null!;
+    public string Title { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public int NumberOfArtworks { get; set; }
+    public List<ArtworkDto> Artworks { get; set; }
 }
-
-public class GetOrdersPastryDTO
+public class ArtworkDto
 {
-    public string Name { get; set; } = null!;
-    public decimal Price { get; set; }
-    public int Amount { get; set; }
+    public string Title { get; set; }
+    public int YearCreated { get; set; }
+    public decimal InsuranceValue { get; set; }
+    public ArtistDto Artist { get; set; }
 }
-     */
+public class ArtistDto
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public DateTime BirthDate { get; set; }
+}
+public class NewExhibitionDto
+{
+    public string Title { get; set; }
+    public string Gallery { get; set; } // Galeria po nazwie
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public List<ArtworkInsuranceDto> Artworks { get; set; }
+}
+public class ArtworkInsuranceDto
+{
+    public int ArtworkId { get; set; }
+    public decimal InsuranceValue { get; set; }
 }

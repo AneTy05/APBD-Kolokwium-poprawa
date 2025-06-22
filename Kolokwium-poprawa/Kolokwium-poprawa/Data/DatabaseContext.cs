@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Kolokwium_poprawa.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Kolokwium_poprawa.Data;
 
@@ -12,136 +13,93 @@ public class DatabaseContext : DbContext
         {
         }
         
-        /*
-         Spis tabel:
-         public DbSet<Pastry> Pastries { get; set; }
-        public DbSet<Client> Clients { get; set; }
-        public DbSet<Employee> Employees { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderPastry> OrderPastries { get; set; }
-        */
+        public DbSet<Gallery> Galleries { get; set; }
+        public DbSet<Exhibition> Exhibitions { get; set; }
+        public DbSet<Artwork> Artworks { get; set; }
+        public DbSet<Artist> Artists { get; set; }
+        public DbSet<ExhibitionArtwork> ExhibitionArtworks { get; set; }
         
-        
-        /*
-        Wprowadzenie przykładowych danych:
         protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         
-        modelBuilder.Entity<Client>().HasData(new List<Client>
+        modelBuilder.Entity<Artist>().HasData(new List<Artist>
             {
-                new Client {
-                    Id = 1,
-                    FirstName = "Jan",
-                    LastName = "Kowalski"
+                new Artist {
+                    ArtistId = 1,
+                    FirstName = "Pablo",
+                    LastName = "Picasso",
+                    BirthDate = new DateTime(1881, 10, 25)
                 },
-                new Client {
-                    Id = 2,
-                    FirstName = "Anna",
-                    LastName = "Nowak"
+                new Artist() {
+                    ArtistId = 2,
+                    FirstName = "Frida",
+                    LastName = "Kahlo",
+                    BirthDate = new DateTime(1907, 7, 6)
                 }
             });
 
-            modelBuilder.Entity<Employee>().HasData(new List<Employee>
+            modelBuilder.Entity<Artwork>().HasData(new List<Artwork>
             {
-                new Employee {
-                    Id = 1,
-                    FirstName = "Adam",
-                    LastName = "Nowak"
+                new Artwork {
+                    ArtworkId = 1,
+                    Title = "Guernica",
+                    YearCreated = 1937,
+                    ArtistId = 1
                 },
-                new Employee {
-                    Id = 2,
-                    FirstName = "Aleksandra",
-                    LastName = "Wiśniewska"
+                new Artwork {
+                    ArtworkId = 2,
+                    Title = "The Two Fridas",
+                    YearCreated = 1939,
+                    ArtistId = 2
                 }
             });
 
-            modelBuilder.Entity<Pastry>().HasData(new List<Pastry>
+            modelBuilder.Entity<Gallery>().HasData(new List<Gallery>
             {
-                new Pastry
+                new Gallery
                 {
-                    Id = 1,
-                    Name = "Drożdzówka",
-                    Price = 3.3M,
-                    Type = "A"
-                },
-                new Pastry
-                {
-                    Id = 2,
-                    Name = "Babka cytrynowa",
-                    Price = 21.23M,
-                    Type = "B"
-                },
-                new Pastry
-                {
-                    Id = 3,
-                    Name = "Jagodzianka",
-                    Price = 7.2M,
-                    Type = "A"
+                    GalleryId = 1,
+                    Name = "Modern Art Space",
+                    EstablishedDate = new DateTime(2001, 9, 12)
                 }
             });
 
-            modelBuilder.Entity<Order>().HasData(new List<Order>
+            modelBuilder.Entity<Exhibition>().HasData(new List<Exhibition>
             {
-                new Order
+                new Exhibition
                 {
-                    Id = 1,
-                    AcceptedAt = DateTime.Parse("2024-05-28"),
-                    FulfilledAt = DateTime.Parse("2024-05-29"),
-                    Comments = "Lorem ipsum ...",
-                    ClientId = 1,
-                    EmployeeId = 2
+                    ExhibitionId = 1,
+                    Title = "20th Century Giants",
+                    StartDate = new DateTime(2024, 5, 1),
+                    EndDate = new DateTime(2024, 9, 1),
+                    GalleryId = 1
                 },
-                new Order
+                new Exhibition
                 {
-                    Id = 2,
-                    AcceptedAt = DateTime.Parse("2024-05-31"),
-                    FulfilledAt = DateTime.Parse("2024-06-01"),
-                    Comments = "Lorem ipsum ...",
-                    ClientId = 1,
-                    EmployeeId = 1
-                },
-                new Order
-                {
-                    Id = 3,
-                    AcceptedAt = DateTime.Parse("2024-06-01"),
-                    FulfilledAt = null,
-                    Comments = null,
-                    ClientId = 2,
-                    EmployeeId = 1
+                    ExhibitionId = 2,
+                    Title = "Best of Century",
+                    StartDate = new DateTime(2024, 10, 1),
+                    EndDate = new DateTime(2024, 12, 1),
+                    GalleryId = 1
                 }
             });
 
-            modelBuilder.Entity<OrderPastry>().HasData(new List<OrderPastry>
+            modelBuilder.Entity<ExhibitionArtwork>().HasData(new List<ExhibitionArtwork>
             {
-                new OrderPastry
+                new ExhibitionArtwork
                 {
-                    OrderId = 1,
-                    PastryId = 1,
-                    Amount = 3,
+                    ExhibitionId = 1,
+                    ArtworkId = 1,
+                    InsuranceValue = (float)10000.00
                 },
-                new OrderPastry
+                new ExhibitionArtwork
                 {
-                    OrderId = 1,
-                    PastryId = 3,
-                    Amount = 4,
-                    Comment = "Lorem ipsum ..."
-                },
-                new OrderPastry
-                {
-                    OrderId = 2,
-                    PastryId = 2,
-                    Amount = 2
-                },
-                new OrderPastry
-                {
-                    OrderId = 2,
-                    PastryId = 1,
-                    Amount = 12
+                    ExhibitionId = 1,
+                    ArtworkId = 2,
+                    InsuranceValue = (float)800000.00m
                 }
             });
     }
-         
-        */
         
 }

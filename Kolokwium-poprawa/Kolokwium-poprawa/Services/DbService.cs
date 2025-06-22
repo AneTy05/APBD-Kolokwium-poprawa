@@ -1,49 +1,47 @@
-﻿namespace Kolokwium_poprawa.Services;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Kolokwium_poprawa.Data;
 
-public class DbService : IDbService
+namespace APBD_Kolokwium.Services
 {
-    /*
-    private readonly DatabaseContext _context;
-    public DbService(DatabaseContext context)
+    public class DbService : IDbService
     {
-        _context = context;
-    }
-    
-    public async Task<ICollection<Order>> GetOrdersData(string? clientLastName)
-    {
-        return await _context.Orders
-            .Include(e => e.Client)
-            .Include(e => e.OrderPastries)
-            .ThenInclude(e => e.Pastry)
-            .Where(e => clientLastName == null || e.Client.LastName == clientLastName)
-            .ToListAsync();
-    }
+        private readonly DatabaseContext _context;
 
-    public async Task<bool> DoesClientExist(int clientID)
-    {
-        return await _context.Clients.AnyAsync(e => e.Id == clientID);
-    }
+        public DbService(DatabaseContext context)
+        {
+            _context = context;
+        }
 
-    public async Task<bool> DoesEmployeeExist(int employeeID)
-    {
-        return await _context.Employees.AnyAsync(e => e.Id == employeeID);
-    }
+        public async Task<bool> GalleryExistsAsync(string name)
+        {
+            return await _context.Galleries.AnyAsync(g => g.Name == name);
+        }
 
-    public async Task AddNewOrder(Order order)
-    {
-        await _context.AddAsync(order);
-        await _context.SaveChangesAsync();
-    }
+        public async Task<bool> ArtworkExistsAsync(int artworkId)
+        {
+            return await _context.Artworks.AnyAsync(a => a.ArtworkId == artworkId);
+        }
 
-    public async Task<Pastry?> GetPastryByName(string name)
-    {
-        return await _context.Pastries.FirstOrDefaultAsync(e => e.Name == name);
-    }
+        public async Task<T?> GetByIdAsync<T>(int id) where T : class
+        {
+            return await _context.Set<T>().FindAsync(id);
+        }
 
-    public async Task AddOrderPastries(IEnumerable<OrderPastry> orderPastries)
-    {
-        await _context.AddRangeAsync(orderPastries);
-        await _context.SaveChangesAsync();
+        public async Task<IEnumerable<T>> GetAllAsync<T>() where T : class
+        {
+            return await _context.Set<T>().ToListAsync();
+        }
+
+        public async Task AddAsync<T>(T entity) where T : class
+        {
+            await _context.Set<T>().AddAsync(entity);
+        }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
-    */
 }

@@ -1,97 +1,99 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using APBD_Kolokwium.Services;
+using Kolokwium_poprawa.Data;
+using Kolokwium_poprawa.DTOs;
+using Kolokwium_poprawa.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Kolokwium_poprawa.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class Controller
+public class GalleriesController : ControllerBase
 {
-    /* - dla POST
+    private readonly DatabaseContext _context;
     private readonly IDbService _dbService;
-    public ClientsController(IDbService dbService)
+
+    public GalleriesController(DatabaseContext context, IDbService dbService)
     {
+        _context = context;
         _dbService = dbService;
     }
-    
-    [HttpPost("{clientID}/orders")]
-    public async Task<IActionResult> AddNewOrder(int clientID, NewOrderDTO newOrder)
+
+    [HttpGet("{id}/exhibitions")]
+    public async Task<IActionResult> GetExhibitionsForGallery(int id)
     {
-        if (!await _dbService.DoesClientExist(clientID))
-            return NotFound($"Client with given ID - {clientID} doesn't exist");
-        if (!await _dbService.DoesEmployeeExist(newOrder.EmployeeID))
-            return NotFound($"Employee with given ID - {newOrder.EmployeeID} doesn't exist");
-    
-        var order = new Order()
+        var gallery = await _context.Galleries
+            .Include(g => g.Exhibitions)
+            .ThenInclude(e => e.ExhibitionArtworks)
+            .ThenInclude(ea => ea.Artwork)
+            .ThenInclude(a => a.Artist)
+            .FirstOrDefaultAsync(g => g.GalleryId == id);
+
+        if (gallery == null)
+            return NotFound("Galeria nie istnieje");
+
+        var result = new
         {
-            ClientId = clientID,
-            EmployeeId = newOrder.EmployeeID,
-            AcceptedAt = newOrder.AcceptedAt,
-            Comments = newOrder.Comments,
+            galleryId = gallery.GalleryId,
+            name = gallery.Name,
+            establishedDate = gallery.EstablishedDate,
+            exhibitions = gallery.Exhibitions.Select(e => new
+            {
+                title = e.Title,
+                startDate = e.StartDate,
+                endDate = e.EndDate,
+                numberOfArtworks = e.ExhibitionArtworks.Count,
+                artworks = e.ExhibitionArtworks.Select(ea => new
+                {
+                    title = ea.Artwork.Title,
+                    yearCreated = ea.Artwork.YearCreated,
+                    insuranceValue = ea.InsuranceValue,
+                    artist = new
+                    {
+                        firstName = ea.Artwork.Artist.FirstName,
+                        lastName = ea.Artwork.Artist.LastName,
+                        birthDate = ea.Artwork.Artist.BirthDate
+                    }
+                })
+            })
         };
-    
-        var pastries = new List<OrderPastry>();
-        foreach (var newPastry in newOrder.Pastries)
-        {
-            var pastry = await _dbService.GetPastryByName(newPastry.Name);
-            if(pastry is null)
-                return NotFound($"Pastry with name - {newPastry.Name} doesn't exist");
-    
-            pastries.Add(new OrderPastry
-            {
-                PastryId = pastry.Id,
-                Amount = newPastry.Amount,
-                Comment = newPastry.Comments,
-                Order = order
-            });
-        }
-    
-        using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-        {
-            await _dbService.AddNewOrder(order);
-            await _dbService.AddOrderPastries(pastries);
-    
-            scope.Complete();
-        }
-    
-        return Created("api/orders", new
-        {
-            Id = order.Id,
-            order.AcceptedAt,
-            order.FulfilledAt,
-            order.Comments,
-        });
+
+        return Ok(result);
     }
-     */
-    /* Dla GET
-    [Route("api/[controller]")]
-[ApiController]
-public class OrdersController : ControllerBase
-{
-    private readonly IDbService _dbService;
-    public OrdersController(IDbService dbService)
+
+    [HttpPost("/api/exhibitions")]
+    public async Task<IActionResult> AddExhibition([FromBody] NewExhibitionDto request)
     {
-        _dbService = dbService;
-    }
-    
-    [HttpGet]
-    public async Task<IActionResult> GetOrdersData(string? clientLastName = null)
-    {
-        var orders = await _dbService.GetOrdersData(clientLastName);
-        
-        return Ok(orders.Select(e => new GetOrdersDTO()
+        var gallery = await _context.Galleries
+            .FirstOrDefaultAsync(g => g.Name == request.Gallery);
+
+        if (gallery == null)
+            return NotFound("Galeria o podanej nazwie nie istnieje.");
+
+        var artworkIds = request.Artworks.Select(a => a.ArtworkId).ToList();
+        var artworks = await _context.Artworks
+            .Where(a => artworkIds.Contains(a.ArtworkId))
+            .ToListAsync();
+
+        if (artworks.Count != request.Artworks.Count)
+            return BadRequest("Jedno lub więcej dzieł nie istnieje.");
+
+        var exhibition = new Exhibition
         {
-            Id = e.Id,
-            AcceptedAt = e.AcceptedAt,
-            FulfilledAt = e.FulfilledAt,
-            Comments = e.Comments,
-            Pastries = e.OrderPastries.Select(p => new GetOrdersPastryDTO
+            Title = request.Title,
+            StartDate = request.StartDate,
+            EndDate = request.EndDate,
+            GalleryId = gallery.GalleryId,
+            ExhibitionArtworks = request.Artworks.Select(a => new ExhibitionArtwork
             {
-                Name = p.Pastry.Name,
-                Price = p.Pastry.Price,
-                Amount = p.Amount
+                ArtworkId = a.ArtworkId,
             }).ToList()
-        }));
+        };
+
+        await _context.Exhibitions.AddAsync(exhibition);
+        await _context.SaveChangesAsync();
+
+        return Ok("Wystawa została dodana.");
     }
-}
-     */
 }
